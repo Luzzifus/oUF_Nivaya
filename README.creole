@@ -1,0 +1,27 @@
+== Description ==
+
+oUF_Nivaya is a unitframe addon for WoW with low memory and cpu usage. It is based on [[http://www.github.com/haste/oUF|oUF]] by [[http://www.github.com/haste|haste]].  The feature which makes it distinctive from other layouts is the capability to configure it ingame (/ouf). 
+
+For a detailed description and a feature overview visit [[http://www.wowinterface.com/downloads/info11078-oUF_Nivaya.html]].
+
+
+== Version History ==
+
+=== r50 beta ===
+
+ * **Only for use with WoW 4.0.1+ and oUF 1.5+!**
+ * Added option to change maximum heal prediction overflow.
+ * Added option to limit maximum number of visible raid groups.
+ * Added HolyPower display (Paladin).
+ * Added SoulShards display (Warlock).
+ * Added support for the new HealPrediction element in oUF.
+ * Added option to toggle HealPrediction.
+ * Removed oUF_HealComm4 support (done by HealPrediction).
+
+
+=== r48 ===
+
+ * Added option to display combo points as text value.
+ * Fixed TotemBar position (Shaman).
+ * Fixed RuneBar position (Deathknight).
+ * Fixed Castbar display problems for ToT and focus frames.
