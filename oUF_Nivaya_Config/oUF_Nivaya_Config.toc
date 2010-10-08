@@ -1,0 +1,14 @@
+## Interface: 30300
+## Author: Nivaya
+## Title: oUF Nivaya Config
+## Notes: Options module for oUF_Nivaya
+## RequiredDeps: oUF, oUF_Nivaya
+## OptionalDeps: SharedMedia, SharedMediaAdditionalFonts
+## LoadOnDemand: 1
+
+libs\LibStub\LibStub.lua
+libs\AceGUI-3.0\AceGUI-3.0.xml
+libs\AceConfig-3.0\AceConfig-3.0.xml
+libs\AceGUI-3.0-SharedMediaWidgets\widget.xml
+
+oUF_Nivaya_Config.lua

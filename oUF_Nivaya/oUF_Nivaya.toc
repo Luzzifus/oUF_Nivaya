@@ -1,0 +1,17 @@
+## Interface: 30300
+## Author: Nivaya
+## Title: oUF Nivaya
+## Notes: Custom layout based on oUF_Pazrael
+## RequiredDeps: oUF
+## OptionalDeps: SharedMedia, SharedMediaAdditionalFonts, oUF_CombatFeedback, oUF_ReadyCheck, oUF_Voice, oUF_Experience, oUF_Reputation, oUF_Smooth, oUF_GCD, oUF_RuneBar, oUF_TotemBar, oUF_HealComm4
+## X-Category: UnitFrame
+## SavedVariables: nivcfgDB
+
+libs\LibStub.lua
+libs\CallbackHandler-1.0.lua
+libs\LibDataBroker-1.1.lua
+libs\LibSharedMedia-3.0.lua
+libs\LibBanzai-2.0.lua
+
+init_and_config.lua
+oUF_Nivaya.lua
