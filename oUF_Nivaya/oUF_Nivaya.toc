@@ -1,9 +1,8 @@
-## Interface: 30300
+## Interface: 40000
 ## Author: Nivaya
 ## Title: oUF Nivaya
-## Notes: Custom layout based on oUF_Pazrael
 ## RequiredDeps: oUF
-## OptionalDeps: SharedMedia, SharedMediaAdditionalFonts, oUF_CombatFeedback, oUF_ReadyCheck, oUF_Voice, oUF_Experience, oUF_Reputation, oUF_Smooth, oUF_GCD, oUF_RuneBar, oUF_TotemBar, oUF_HealComm4
+## OptionalDeps: SharedMedia, SharedMediaAdditionalFonts, oUF_CombatFeedback, oUF_ReadyCheck, oUF_Voice, oUF_Experience, oUF_Reputation, oUF_Smooth, oUF_GCD, oUF_RuneBar, oUF_TotemBar
 ## X-Category: UnitFrame
 ## SavedVariables: nivcfgDB
 

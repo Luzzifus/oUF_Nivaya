@@ -16,6 +16,9 @@ local defaults = {
 	castBarTTF = true,
 	
     enableBanzai = true,        -- Toggle aggro coloring
+    enableHealPred = true,      -- Toggle heal prediction
+    hpOverflow = 1.5,           -- maximum overflow of heal prediction
+    
 	dbHighlightFilter = true,	-- Toggle filtering of debuff highlighting, 
 								-- true means you only see highlighting for debuffs you can cure
 	playerX = 380,
@@ -24,6 +27,7 @@ local defaults = {
 	enablePR = true,
 	verticalGroups = true,
 	hmverticalGroups = false,
+    maxRaidGroups = 8,          -- maximum number of raidgroups to be shown
 	
 	enableTTT = false,			-- Target of Target of Target
 	enableFT = false,			-- Focus Target
@@ -212,21 +216,22 @@ function oUF_Nivaya:UpdatePrh()
 	local tXs, tYs = oUF_Raid1:GetLeft(), oUF_Raid1:GetTop()
 	prh:ClearAllPoints()
 	local offs = nivDB.healerMode and nivcfgDB.hmraidOffset or nivcfgDB.raidOffset
+    local rg, rg1 = nivDB.maxRaidGroups, nivDB.maxRaidGroups - 1
 	if (offs > 0) then
 		if nivDB.vg then
 			prh:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', tXs, tYs)
-			prh:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMLEFT', tXs+8*nivDB.prx+7*offs, tYs-5*nivDB.pry-4*3)
+			prh:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMLEFT', tXs+rg*nivDB.prx+rg1*offs, tYs-5*nivDB.pry-4*3)
 		else
 			prh:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', tXs, tYs-nivDB.pry)
-			prh:SetPoint('TOPRIGHT', UIParent, 'BOTTOMLEFT', tXs+5*nivDB.prx+4*3, tYs+7*nivDB.pry+7*offs)
+			prh:SetPoint('TOPRIGHT', UIParent, 'BOTTOMLEFT', tXs+5*nivDB.prx+4*3, tYs+rg1*nivDB.pry+rg1*offs)
 		end
 	else
 		if nivDB.vg then
 			prh:SetPoint('TOPRIGHT', UIParent, 'BOTTOMLEFT', tXs+nivDB.prx, tYs)
-			prh:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', tXs-7*nivDB.prx+7*offs, tYs-5*nivDB.pry-4*3)
+			prh:SetPoint('BOTTOMLEFT', UIParent, 'BOTTOMLEFT', tXs-rg1*nivDB.prx+rg1*offs, tYs-5*nivDB.pry-4*3)
 		else
 			prh:SetPoint('TOPLEFT', UIParent, 'BOTTOMLEFT', tXs, tYs)
-			prh:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMLEFT', tXs+5*nivDB.prx+4*3, tYs-8*nivDB.pry+7*offs)
+			prh:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMLEFT', tXs+5*nivDB.prx+4*3, tYs-rg*nivDB.pry+rg1*offs)
 		end
 	end
 end
@@ -240,6 +245,7 @@ function oUF_Nivaya:ADDON_LOADED(event, addon)
 	
 	nivDB.healerMode = nivcfgDB.healerMode
 	nivDB.playerLevel = UnitLevel('player')
+    nivDB.maxRaidGroups = nivcfgDB.maxRaidGroups
 	
 	nivDB.ccH, nivDB.ccM, nivDB.crH, nivDB.crM = nivcfgDB.colorClassHealth, nivcfgDB.colorClassMana, nivcfgDB.colorReactHealth, nivcfgDB.colorReactMana
 	
@@ -360,7 +366,7 @@ function oUF_Nivaya:ADDON_LOADED(event, addon)
 		end
 
 		local raid = {}
-		for i = 1, 8 do
+		for i = 1, nivDB.maxRaidGroups do
 			local raidgroup
 			if vg then
                 raidgroup = oUF:SpawnHeader('oUF_Raid'..i, nil, 'raid',

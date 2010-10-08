@@ -254,7 +254,10 @@ local function PostUpdateHealth(bar, unit, min, max)
     if not banzaiIgnoredUnits[unit] and not slf.ignoreBanzai and oUF_Nivaya.banzai:GetUnitAggroByUnitId(unit) then
 		bar:SetStatusBarColor(1, 0, 0)
 	end
-
+    
+    -- heal prediction
+    local hp = bar.__owner.HealPrediction
+    if hp then hp:ForceUpdate() end
 end
 
 local LFDRoleUpdate = function(self, event)
@@ -421,15 +424,27 @@ local function styleFunc(self, unit)
 		self.Power.colorReaction = nivDB.crM and true or false
 		self.Power.colorPower = (not (nivDB.ccM or nivDB.crM)) and true or false
 	end
-    
-    self.HealCommBar = CreateFrame('StatusBar', nil, self.Health)
-	self.HealCommBar:SetHeight(0)
-	self.HealCommBar:SetWidth(0)
-	self.HealCommBar:SetStatusBarTexture(self.Health:GetStatusBarTexture():GetTexture())
-    self.HealCommBar:GetStatusBarTexture():SetHorizTile(false)
-	self.HealCommBar:SetStatusBarColor(0, 1, 0, 0.25)
-	self.HealCommBar:SetPoint('LEFT', self.Health, 'LEFT')
-	self.allowHealCommOverflow = true
+
+    if nivcfgDB.enableHealPred then
+
+        local ohpb = CreateFrame('StatusBar', nil, self.Health)
+        ohpb:SetPoint('TOPLEFT', self.Health:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+        ohpb:SetPoint('BOTTOMLEFT', self.Health:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+        ohpb:SetWidth(nivcfgDB.ptWidth)
+        ohpb:SetStatusBarTexture(nivDB.texStrHealth)
+        ohpb:SetStatusBarColor(1, 0.5, 0, 0.25)
+        self.ohpb = ohpb
+        
+        local mhpb = CreateFrame('StatusBar', nil, self.Health)
+        mhpb:SetPoint('TOPLEFT', ohpb:GetStatusBarTexture(), 'TOPRIGHT', 0, 0)
+        mhpb:SetPoint('BOTTOMLEFT', ohpb:GetStatusBarTexture(), 'BOTTOMRIGHT', 0, 0)
+        mhpb:SetWidth(nivcfgDB.ptWidth)
+        mhpb:SetStatusBarTexture(nivDB.texStrHealth)
+        mhpb:SetStatusBarColor(0, 1, 0.5, 0.25)
+        self.mhpb = mhpb
+
+        self.HealPrediction = { myBar = mhpb, otherBar = ohpb, maxOverflow = nivcfgDB.hpOverflow }
+    end
 	
 	self.DebuffHighlight = self.Health:CreateTexture(nil, "OVERLAY")
 	self.DebuffHighlight:SetAllPoints(self.Health)
@@ -439,7 +454,6 @@ local function styleFunc(self, unit)
 	self.DebuffHighlight:SetTexture('Interface\\AddOns\\oUF_Nivaya\\textures\\debuffHighlight')
     if CanDispel[class] then self:RegisterEvent("UNIT_AURA", UpdateDebuffHighlight) end
 
-	self.ignoreHealComm = false
 	self.ignoreBanzai = true
 
 	self.Health.value = setFontString(self.Health, nivDB.fontStrValues, nivcfgDB.fontHeightV)
@@ -559,6 +573,48 @@ local function styleFunc(self, unit)
 			self.DruidMana:SetScript("OnUpdate", function() DruidManaOnUpdate(self) end)
 			self.DruidManaText = setFontString(self.DruidMana, nivDB.fontStrValues, nivcfgDB.fontHeightV)
 			self.DruidManaText:SetPoint("LEFT", self.Health, "LEFT", 2, -4)
+		end
+        
+		if (class == "WARLOCK") then
+			self.SoulShards = {}
+			for i = 1, 3 do
+				local t = CreateFrame("StatusBar", nil, self)
+				if i == 1 then
+					t:SetPoint("BOTTOMLEFT", self.Power, "BOTTOMLEFT", 1, 1)
+				else
+					t:SetPoint("TOPLEFT", self.SoulShards[i - 1], "TOPRIGHT", 1, 0)
+				end
+				t:SetStatusBarTexture(nivDB.texStrMana)
+				t:SetWidth(nivcfgDB.ptWidth / 3 - ((i < 3) and 1 or 2) )
+                t:SetHeight(2)
+				t:SetStatusBarColor(.86,.44, 1)
+                t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
+                t:SetBackdropColor(0, 0, 0)
+                t:SetFrameLevel(3)
+                
+                self.SoulShards[i] = t
+            end
+		end
+
+		if (class == "PALADIN") then
+			self.HolyPower = {}
+			for i = 1, 3 do
+				local t = CreateFrame("StatusBar", nil, self)
+				if i == 1 then
+					t:SetPoint("BOTTOMLEFT", self.Power, "BOTTOMLEFT", 1, 1)
+				else
+					t:SetPoint("TOPLEFT", self.HolyPower[i - 1], "TOPRIGHT", 1, 0)
+				end
+				t:SetStatusBarTexture(nivDB.texStrMana)
+				t:SetWidth(nivcfgDB.ptWidth / 3 - ((i < 3) and 1 or 2) )
+                t:SetHeight(2)
+				t:SetStatusBarColor(1,.95,.33)
+                t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
+                t:SetBackdropColor(0, 0, 0)
+                t:SetFrameLevel(4)
+
+                self.HolyPower[i] = t
+			end
 		end
 		
 		if(class == "DEATHKNIGHT") then
@@ -831,6 +887,7 @@ local function styleFunc(self, unit)
 		self.Health:SetHeight(nivcfgDB.tfHealthHeight)
 		self.Power:SetHeight(nivcfgDB.tfManaHeight)
 	end
+    
 	self.UNIT_NAME_UPDATE = OverrideUpdateName
     self.Health.PostUpdate = PostUpdateHealth
 	self.Power.PostUpdate = PostUpdatePower

@@ -55,7 +55,7 @@
 			end
 		end
 	
-		for i=2,8 do
+		for i = 2, nivDB.maxRaidGroups do
 			local t = _G['oUF_Raid'..i]
 			t:ClearAllPoints()
 			if vg then
@@ -230,7 +230,7 @@ local UpdatePetFrame = function()
 end
 
 local ResizePRframes = function()
-	for i=1,8 do 
+	for i = 1, nivDB.maxRaidGroups do 
 		local t = _G['oUF_Raid'..i]
 		if (t) then t:SetWidth(nivDB.prx) end
 		for j=1,5 do
@@ -432,7 +432,7 @@ local optGeneral = function(order)
 							set = function(info, value)
 								nivcfgDB.enableBanzai = value
 							end, },
-                            
+
             cpText	    = { type = 'toggle', 
 							order = 15, 
 							width = 'full',
@@ -441,7 +441,17 @@ local optGeneral = function(order)
 							get = function(info) return nivcfgDB.cpText end, 
 							set = function(info, value)
 								nivcfgDB.cpText = value
-							end, },                            
+							end, },
+
+            healpred    = { type = 'toggle', 
+							order = 16, 
+							width = 'full',
+							name = "Enable Heal Prediction", 
+							desc = "When this is active, incoming heals for all units will be displayed.", 
+							get = function(info) return nivcfgDB.enableHealPred end, 
+							set = function(info, value)
+								nivcfgDB.enableHealPred = value
+							end, },
 		},
 	}
 end
@@ -1113,6 +1123,21 @@ local optSizePort = function(order)
 		 						nivcfgDB.petManaHeight = tonumber(value)
 		 						UpdatePetFrame()
 							end, },
+
+            header5 	= { type = "header", order = 22, name = "Miscellaneous", },
+
+            hpOverflow	= { type = 'range', 
+							order = 23, 
+							name = "Maximum Heal Prediction Overflow", 
+                            desc = "Defines the maximum heal prediction overflow to be shown. At 1.0 the heal prediction bar will never exceed your max health, at 2.0 it will be capped at twice the width of the health bar. Requires reloading the UI to take effect.",
+                            width = "full",
+							min = 1.0, 
+							max = 2.0,
+							step = 0.05, 
+							get = function(info) return nivcfgDB.hpOverflow end, 
+							set = function(info, value)
+								nivcfgDB.hpOverflow = value
+							end, },
 		},
 	}
 end
@@ -1269,7 +1294,19 @@ local optRaidframes = function(order)
 								RefreshAnchoring()
 								oUF_Nivaya:UpdatePrh()
 							end, },
-		},
+
+            maxRGroups	= { type = 'range', 
+							order = 10, 
+							name = "Max raid groups", 
+                            desc = "Maximum number of raid groups to be shown at any time. Requires reloading the UI to take effect.",
+							min = 1, 
+							max = 8,
+							step = 1, 
+							get = function(info) return nivcfgDB.maxRaidGroups end, 
+							set = function(info, value)
+								nivcfgDB.maxRaidGroups = value
+							end, },
+                            },
 	}
 end
 
