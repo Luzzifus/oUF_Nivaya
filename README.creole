@@ -7,7 +7,7 @@ For a detailed description and a feature overview visit [[http://www.wowinterfac
 
 == Version History ==
 
-=== r50 beta ===
+=== r50 ===
 
  * **Only for use with WoW 4.0.1+ and oUF 1.5+!**
  * Added option to change maximum heal prediction overflow.
