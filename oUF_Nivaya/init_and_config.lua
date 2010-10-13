@@ -328,23 +328,18 @@ function oUF_Nivaya:ADDON_LOADED(event, addon)
 		end
 		local vg = nivDB.vg
 		
-		local party
-        if vg then
-            party = oUF:SpawnHeader('oUF_Party', nil, 'party',
-                'showPlayer', true,
-                'showParty', true,
-                'yOffset', -3
-            )
-		else
-            party = oUF:SpawnHeader('oUF_Party', nil, 'party',
-                'showPlayer', true,
-                'showParty', true,
-                'xOffset', 3,
-                'point', "LEFT"
-            )
-		end
-		
-		local tOffs
+		local party = oUF:SpawnHeader('oUF_Party', nil, 'party', 
+            'showParty', true, 
+            'showPlayer', true, 
+            vg and 'yOffset' or 'xOffset', vg and -3 or 3, 
+            (not vg) and 'point' or nil, (not vg) and "LEFT" or nil,
+            'oUF-initialConfigFunction', ([[
+                self:SetWidth(%d)
+                self:SetHeight(%d)
+            ]]):format(nivDB.prx, nivDB.pry)
+        )
+
+        local tOffs
 		if (offs > 0) then 
 			if vg then
 				prh:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", tX, tY) 
@@ -367,37 +362,31 @@ function oUF_Nivaya:ADDON_LOADED(event, addon)
 
 		local raid = {}
 		for i = 1, nivDB.maxRaidGroups do
-			local raidgroup
-			if vg then
-                raidgroup = oUF:SpawnHeader('oUF_Raid'..i, nil, 'raid',
-                    'groupFilter', tostring(i),
-                    'showRaid', true,
-                    'showParty', false,
-                    'showPlayer', false,
-                    'yOffset', -3
-                )
-				table.insert(raid, raidgroup)
-				if(i==1) then
-					if (offs > 0) then raidgroup:SetPoint('TOPLEFT', prh, 'TOPLEFT') else raidgroup:SetPoint('TOPRIGHT', prh, 'TOPRIGHT') end
-				else
-					raidgroup:SetPoint('TOPRIGHT', raid[i-1], 'TOPLEFT', offs+tOffs, 0)
-				end
-			else
-                raidgroup = oUF:SpawnHeader('oUF_Raid'..i, nil, 'raid',
-                    'groupFilter', tostring(i),
-                    'showRaid', true,
-                    'showParty', false,
-                    'showPlayer', false,
-                    'xOffset', 3,
-                    'point', "LEFT"
-                )            
-				table.insert(raid, raidgroup)
-				if(i==1) then
-					if (offs > 0) then raidgroup:SetPoint('BOTTOMLEFT', prh, 'BOTTOMLEFT') else raidgroup:SetPoint('TOPLEFT', prh, 'TOPLEFT') end
-				else
-					raidgroup:SetPoint('TOPLEFT', raid[i-1], 'BOTTOMLEFT', 0, offs+tOffs)
-				end
-			end
+			local raidgroup = oUF:SpawnHeader('oUF_Raid'..i, nil, 'raid',
+                'groupFilter', tostring(i),
+                'showRaid', true,
+                'showParty', false,
+                'showPlayer', false,
+                vg and 'yOffset' or 'xOffset', vg and -3 or 3, 
+                (not vg) and 'point' or nil, (not vg) and "LEFT" or nil,
+                'oUF-initialConfigFunction', ([[
+                    self:SetWidth(%d)
+                    self:SetHeight(%d)
+                ]]):format(nivDB.prx, nivDB.pry)
+            )
+            
+            table.insert(raid, raidgroup)
+            if(i==1) then
+                local ap
+                if (offs > 0) then ap = vg and 'TOPLEFT' or 'BOTTOMLEFT' else ap = vg and 'TOPRIGHT' or 'TOPLEFT' end
+                raidgroup:SetPoint(ap, prh, ap)
+            else
+                if vg then 
+                    raidgroup:SetPoint('TOPRIGHT', raid[i-1], 'TOPLEFT', offs+tOffs, 0)
+                else 
+                    raidgroup:SetPoint('TOPLEFT', raid[i-1], 'BOTTOMLEFT', 0, offs+tOffs) 
+                end
+            end
 			raidgroup:Show()
 		end
 		

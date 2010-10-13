@@ -858,8 +858,12 @@ local function styleFunc(self, unit)
 		end
         self.Castbar.PostCastStart = PostCastStart        
 	end
-	
-	if(unit=='player' or unit=='target') then
+    
+	if (unitInRaid or unitInParty or unitIsPartyPet) then
+        self:SetSize(nivDB.prx, nivDB.pry)
+		self.Health:SetHeight(nivDB.pr_hp)
+		self.Power:SetHeight(nivDB.pr_pw)
+	elseif(unit=='player' or unit=='target') then
 		self.Portrait = CreateFrame('PlayerModel', nil, self)
 		self.Portrait:SetFrameLevel(1)
 		table.insert(self.__elements, HidePortrait)		
@@ -867,23 +871,15 @@ local function styleFunc(self, unit)
 		
 		self.CombatFeedbackText = setFontString(self.Health, nivDB.fontStrValues, 18, 'OUTLINE')
 		self.CombatFeedbackText:SetPoint('CENTER', self.Health, 'CENTER', 0, 0)
-		self:SetAttribute('initial-height', nivcfgDB.ptHeight)
-		self:SetAttribute('initial-width', nivcfgDB.ptWidth)
+        self:SetSize(nivcfgDB.ptWidth, nivcfgDB.ptHeight)
 		self.Health:SetHeight(nivcfgDB.ptHealthHeight)
 		self.Power:SetHeight(nivcfgDB.ptManaHeight)
 	elseif(unit == 'pet') then
-		self:SetAttribute('initial-height', nivcfgDB.petHeight)
-		self:SetAttribute('initial-width', nivcfgDB.petWidth)
+        self:SetSize(nivcfgDB.petWidth, nivcfgDB.petHeight)
 		self.Health:SetHeight(nivcfgDB.petHealthHeight)
 		self.Power:SetHeight(nivcfgDB.petManaHeight)
-	elseif (unitInRaid or unitInParty or unitIsPartyPet) then
-		self:SetAttribute('initial-height', nivDB.pry)
-		self:SetAttribute('initial-width', nivDB.prx)
-		self.Health:SetHeight(nivDB.pr_hp)
-		self.Power:SetHeight(nivDB.pr_pw)
 	else
-		self:SetAttribute('initial-height', nivcfgDB.tfHeight)
-		self:SetAttribute('initial-width', nivcfgDB.tfWidth)
+        self:SetSize(nivcfgDB.tfWidth, nivcfgDB.tfHeight)    
 		self.Health:SetHeight(nivcfgDB.tfHealthHeight)
 		self.Power:SetHeight(nivcfgDB.tfManaHeight)
 	end
