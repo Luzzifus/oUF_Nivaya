@@ -369,7 +369,7 @@ local function styleFunc(self, unit)
 	self.menu = menu
 	self:SetScript("OnEnter", UnitFrame_OnEnter)
     self:SetScript("OnLeave", UnitFrame_OnLeave)
-	self:RegisterForClicks("anyup")
+	self:RegisterForClicks("AnyDown")
 	self:SetAttribute("*type2", "menu")
 	self:SetBackdrop({bgFile="Interface\\Tooltips\\UI-Tooltip-Background", insets ={left = -1, right = -1, top = -1, bottom = -1}})				-- backdrop for frame using settings
 	self:SetBackdropColor(nivDB.colorBD.r, nivDB.colorBD.g, nivDB.colorBD.b, nivDB.colorBD.a)
