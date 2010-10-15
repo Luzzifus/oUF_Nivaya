@@ -886,7 +886,20 @@ local optPositions = function(order)
 		 					set = function(info, value)
 		 						local t = tonumber(value)
 		 						nivcfgDB.cbTextLenTF = t
-							end, },							
+							end, },
+            
+            header6 	= { type = "header", order = 25, name = "SoulShards and HolyPower", },
+            
+			cdPos   	= {
+							type = 'select',
+							order = 26,
+							name = "Position",
+							values = { ["TopLeft"] = "Top (Left)", ["TopRight"] = "Top (Right)", ["BottomLeft"] = "Bottom (Left)", ["BottomRight"] = "Bottom (Right)", },
+							get = function(info) return nivcfgDB.cdPos end,
+							set = function(info, value)
+								nivcfgDB.cdPos = value 
+								oUF_Nivaya:UpdateClassDisplayPos()
+							end, },            
 		},
 	}
 end

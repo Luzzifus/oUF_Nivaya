@@ -332,12 +332,12 @@ local function PostCreateAuraIcon(self, button)
 	button.overlay.Hide = function(self) self:SetVertexColor(0.4, 0.4, 0.4) end
 end
 
-local function RepOverrideText(self, event, unit, bar, min, max, value, name, id)
-	self.Reputation.Text:SetFormattedText('Rep: %d / '..number(max - min)..' (%.1f%%)', value - min, (value - min)/(max - min)*100)
+local function RepOverrideText(self, unit, name, standing, min, max, value)
+	self.Text:SetFormattedText('Rep: %d / '..number(max - min)..' (%.1f%%)', value - min, (value - min)/(max - min)*100)
 end
 
-local function ExpOverrideText(self, event, unit, bar, min, max)
-	self.Experience.Text:SetFormattedText('Exp: '..number(min)..' / '..number(max)..' (%.1f%%)', min/max*100)
+local function ExpOverrideText(self, unit, min, max)
+	self.Text:SetFormattedText('Exp: '..number(min)..' / '..number(max)..' (%.1f%%)', min/max*100)
 end
 
 local HidePortrait = function(self, unit)
@@ -579,18 +579,12 @@ local function styleFunc(self, unit)
 			self.SoulShards = {}
 			for i = 1, 3 do
 				local t = CreateFrame("StatusBar", nil, self)
-				if i == 1 then
-					t:SetPoint("BOTTOMLEFT", self.Power, "BOTTOMLEFT", 1, 1)
-				else
-					t:SetPoint("TOPLEFT", self.SoulShards[i - 1], "TOPRIGHT", 1, 0)
-				end
 				t:SetStatusBarTexture(nivDB.texStrMana)
-				t:SetWidth(nivcfgDB.ptWidth / 3 - ((i < 3) and 1 or 2) )
-                t:SetHeight(2)
+				t:SetSize(15, 5)
 				t:SetStatusBarColor(.86,.44, 1)
                 t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
                 t:SetBackdropColor(0, 0, 0)
-                t:SetFrameLevel(3)
+                t:SetFrameLevel(4)
                 
                 self.SoulShards[i] = t
             end
@@ -600,14 +594,8 @@ local function styleFunc(self, unit)
 			self.HolyPower = {}
 			for i = 1, 3 do
 				local t = CreateFrame("StatusBar", nil, self)
-				if i == 1 then
-					t:SetPoint("BOTTOMLEFT", self.Power, "BOTTOMLEFT", 1, 1)
-				else
-					t:SetPoint("TOPLEFT", self.HolyPower[i - 1], "TOPRIGHT", 1, 0)
-				end
 				t:SetStatusBarTexture(nivDB.texStrMana)
-				t:SetWidth(nivcfgDB.ptWidth / 3 - ((i < 3) and 1 or 2) )
-                t:SetHeight(2)
+				t:SetSize(15, 5)
 				t:SetStatusBarColor(1,.95,.33)
                 t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
                 t:SetBackdropColor(0, 0, 0)
@@ -616,6 +604,8 @@ local function styleFunc(self, unit)
                 self.HolyPower[i] = t
 			end
 		end
+        
+        oUF_Nivaya:UpdateClassDisplayPos()
 		
 		if(class == "DEATHKNIGHT") then
 			RuneFrame:SetParent(self)
@@ -639,7 +629,7 @@ local function styleFunc(self, unit)
 					t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
 					t:SetBackdropColor(0, 0, 0)
 					t:SetMinMaxValues(0, 1)
-                    t:SetFrameLevel(3)
+                    t:SetFrameLevel(4)
                     
                     self.RuneBar[i] = t
 				end
@@ -661,7 +651,7 @@ local function styleFunc(self, unit)
 				t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
 				t:SetBackdropColor(0, 0, 0)
 				t:SetMinMaxValues(0, 1)
-                t:SetFrameLevel(3)
+                t:SetFrameLevel(4)
 
 				t.bg = t:CreateTexture(nil, "BORDER")
 				t.bg:SetAllPoints(t)
@@ -710,7 +700,6 @@ local function styleFunc(self, unit)
 			self.Experience:SetStatusBarTexture(nivDB.texStrHealth)
             self.Experience:GetStatusBarTexture():SetHorizTile(false)
 			self.Experience:SetStatusBarColor(nivcfgDB.colorHealth.r, nivcfgDB.colorHealth.g, nivcfgDB.colorHealth.b, nivcfgDB.colorHealth.a)
-			self.Experience.MouseOver = true
 			self.Experience.Tooltip = false
 			self.Experience:SetBackdrop({bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background', insets = {top = -1, left = -1, bottom = -1, right = -1}})
 			self.Experience:SetBackdropColor(nivDB.colorBD.r, nivDB.colorBD.g, nivDB.colorBD.b, nivDB.colorBD.a)
@@ -722,6 +711,9 @@ local function styleFunc(self, unit)
 			self.Experience.bg:SetTexture(nivDB.texStrHealth)
 			self.Experience.bg:SetVertexColor(nivcfgDB.colorBg.r, nivcfgDB.colorBg.g, nivcfgDB.colorBg.b, nivcfgDB.colorBg.a)
 			
+            self.Experience:SetAlpha(0)
+            self.Experience:SetScript('OnEnter', function(self) self:SetAlpha(1) end)
+            self.Experience:SetScript('OnLeave', function(self) self:SetAlpha(0) end)
 			self.Experience.PostUpdate = ExpOverrideText
 		end
 		
@@ -732,7 +724,6 @@ local function styleFunc(self, unit)
 			self.Reputation:SetStatusBarTexture(nivDB.texStrHealth)
             self.Reputation:GetStatusBarTexture():SetHorizTile(false)
 			self.Reputation:SetStatusBarColor(nivcfgDB.colorHealth.r, nivcfgDB.colorHealth.g, nivcfgDB.colorHealth.b, nivcfgDB.colorHealth.a)
-			self.Reputation.MouseOver = true
 			self.Reputation.Tooltip = false
 			self.Reputation:SetBackdrop({bgFile = 'Interface\\Tooltips\\UI-Tooltip-Background', insets = {top = -1, left = -1, bottom = -1, right = -1}})
 			self.Reputation:SetBackdropColor(nivDB.colorBD.r, nivDB.colorBD.g, nivDB.colorBD.b, nivDB.colorBD.a)
@@ -744,6 +735,9 @@ local function styleFunc(self, unit)
 			self.Reputation.bg:SetTexture(nivDB.texStrHealth)
 			self.Reputation.bg:SetVertexColor(nivcfgDB.colorBg.r, nivcfgDB.colorBg.g, nivcfgDB.colorBg.b, nivcfgDB.colorBg.a)
 			
+            self.Reputation:SetAlpha(0)
+            self.Reputation:SetScript('OnEnter', function(self) self:SetAlpha(1) end)
+            self.Reputation:SetScript('OnLeave', function(self) self:SetAlpha(0) end)
 			self.Reputation.PostUpdate = RepOverrideText
 		end
 		

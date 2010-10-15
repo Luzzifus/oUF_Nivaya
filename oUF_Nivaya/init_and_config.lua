@@ -129,6 +129,8 @@ local defaults = {
     hideBlizzAuras = false,     -- hide default buff frame
     
     cpText = false,             -- show ComboPoints as text instead of bubbles
+    
+    cdPos = "TopRight",         -- position of class specific display (SoulShards, HolyPower)
 	
 	buffs = {	['player'] 				= { enabled = false, pos = "LeftBottom", },
 				['target']				= { enabled = true,  pos = "TopLeft", },
@@ -600,6 +602,34 @@ function oUF_Nivaya:UpdateNamePos(self, unit)
 	else
 		self.Name:SetPoint("TOPLEFT", self, "BOTTOMLEFT", 1, -2)
 	end			
+end
+
+function oUF_Nivaya:UpdateClassDisplayPos()
+    local v
+    if oUF_player.SoulShards then v = oUF_player.SoulShards
+    elseif oUF_player.HolyPower then v = oUF_player.HolyPower 
+    else return end
+    
+    for i = 1, 3 do
+        v[i]:ClearAllPoints()
+        if i == 1 then
+            if nivcfgDB.cdPos == "TopLeft" then
+                v[i]:SetPoint("BOTTOMLEFT", oUF_player, "TOPLEFT", 1, 3)
+            elseif nivcfgDB.cdPos == "TopRight" then
+                v[i]:SetPoint("BOTTOMRIGHT", oUF_player, "TOPRIGHT", -1, 3)
+            elseif nivcfgDB.cdPos == "BottomLeft" then
+                v[i]:SetPoint("TOPLEFT", oUF_player, "BOTTOMLEFT", 1, -3)
+            elseif nivcfgDB.cdPos == "BottomRight" then
+                v[i]:SetPoint("TOPRIGHT", oUF_player, "BOTTOMRIGHT", -1, -3)
+            end
+        else
+            if (nivcfgDB.cdPos == "TopLeft") or (nivcfgDB.cdPos == "BottomLeft") then
+                v[i]:SetPoint("TOPLEFT", v[i - 1], "TOPRIGHT", 3, 0)
+            elseif (nivcfgDB.cdPos == "TopRight") or (nivcfgDB.cdPos == "BottomRight") then
+                v[i]:SetPoint("TOPRIGHT", v[i - 1], "TOPLEFT", -3, 0)
+            end
+        end
+    end
 end
 
 function oUF_Nivaya:ShortName(tS, i, d)

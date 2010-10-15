@@ -7,6 +7,14 @@ For a detailed description and a feature overview visit [[http://www.wowinterfac
 
 == Version History ==
 
+=== r53 ===
+
+ * Improved position and size of SoulShards and HolyPower.
+ * Added option to change the position of SoulShards and HolyPower (positions tab).
+ * Fixed errors with oUF_Experience and oUF_Reputation.
+ * Added mouseover show/hide for oUF_Experience and oUF_Reputation (again).
+
+
 === r51 ===
 
  * Fixed bug that prevented all frames from showing up with oUF 1.5.1+.
