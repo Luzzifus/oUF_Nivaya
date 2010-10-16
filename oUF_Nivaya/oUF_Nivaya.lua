@@ -174,71 +174,7 @@ end)
 
 local function PostUpdateHealth(bar, unit, min, max)
     local slf = bar:GetParent()
---[[
-	if(UnitIsDead(unit)) then
-		bar:SetValue(0)
-		bar.value:SetText("dead")
-	elseif(UnitIsGhost(unit)) then
-		bar:SetValue(0)
-		bar.value:SetText("dead")
-	elseif(not UnitIsConnected(unit)) then
-		bar.value:SetText("off")
-	else
-		if(unit=="player") then
-			if (slf:GetName():match"oUF_Raid") or (slf:GetName():match"oUF_Party") or (unit and unit:find('partypet%d')) then
-				if nivDB.healerMode then
-					if(min~=max) then
-						bar.value:SetFormattedText("|cffff8080%s|r", number(min-max))
-					else
-						bar.value:SetText(number(max))
-					end				
-				else
-					bar.value:SetText()
-				end
-			else
-				if(min~=max) then
-					bar.value:SetFormattedText("|cffff8080%s|r |cff0090ff/|r %d%%", number(min-max), floor(min/max*100))
-				else
-					bar.value:SetText(number(max))
-				end
-			end
-		elseif(unit=="focus" or unit=="focustarget" or unit=="targettarget") then
-			if(max==100) then
-				if(min~=max) then
-					bar.value:SetText(floor(min/max*100).."%")
-				else
-					bar.value:SetText()
-				end
-			elseif(min~=max) then
-				bar.value:SetFormattedText("%s (%d%%)", number(min), floor(min/max*100))
-			else
-				bar.value:SetFormattedText("%s", number(max))
-			end
-		elseif(unit=="pet") then
-			if(min~=max) then
-				bar.value:SetText(number(min))
-			else
-				bar.value:SetText(number(max))
-			end
-		elseif (slf:GetName():sub(1,9)=="oUF_Party") or (slf:GetName():sub(1,8)=="oUF_Raid") or (unit and unit:find('partypet%d')) then
-			if nivDB.healerMode then
-				if(min~=max) then
-					bar.value:SetFormattedText("|cffff8080%s|r", number(min-max))
-				else
-					bar.value:SetText(number(max))
-				end				
-			else
-				bar.value:SetText()
-			end
-		else
-			if(min~=max) then			
-				bar.value:SetFormattedText("%s (%d%%)", number(min), floor(min/max*100))
-			else
-				bar.value:SetFormattedText("%s", number(min))
-			end
-		end
-	end
-    ]]--
+    
 	if((UnitIsTapped(unit) and not(UnitIsTappedByPlayer(unit))) or not(UnitIsConnected(unit))) then 
 		bar:SetStatusBarColor(0.6, 0.6, 0.6)
 	else
@@ -299,26 +235,6 @@ local function DruidManaOnUpdate(self, event, unit)
 	if (p==0) then
 		self.Power.value:SetPoint("LEFT", self.Health, "LEFT", 2, 0)
 	end
-end
-
-local function PostUpdatePower(bar, unit, min, max)
-    --[[
-    local slf = bar:GetParent()
-    
-	if (not bar.value) then return end
-	if (not UnitIsPlayer(unit)) then
-		bar.value:SetText()
-	else
-		if (min==0) then
-			bar.value:SetText()
-		elseif (not UnitIsConnected(unit)) or UnitIsDead(unit) or UnitIsGhost(unit) then
-			bar.value:SetText()			
-		elseif (unit=="player") or (unit=="target") then
-			bar.value:SetFormattedText("|cff8080ff%s|r", number(min))
-		end
-	end
-	slf.UNIT_NAME_UPDATE(slf, event, unit)
-    ]]--
 end
 
 local function PostCreateAuraIcon(self, button)
@@ -894,7 +810,6 @@ local function styleFunc(self, unit)
     
 	self.UNIT_NAME_UPDATE = OverrideUpdateName
     self.Health.PostUpdate = PostUpdateHealth
-	self.Power.PostUpdate = PostUpdatePower
     return self
 end
 
