@@ -414,6 +414,11 @@ function oUF_Nivaya:ADDON_LOADED(event, addon)
 			end
 		end)
 
+        -- hide blizzard raidmanager and raidcontainer
+        CompactRaidFrameManager:UnregisterAllEvents()
+        CompactRaidFrameManager:Hide()
+        CompactRaidFrameContainer:UnregisterAllEvents()
+        CompactRaidFrameContainer:Hide() 
 	end
 end
 

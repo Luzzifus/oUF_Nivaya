@@ -174,7 +174,7 @@ end)
 
 local function PostUpdateHealth(bar, unit, min, max)
     local slf = bar:GetParent()
-
+--[[
 	if(UnitIsDead(unit)) then
 		bar:SetValue(0)
 		bar.value:SetText("dead")
@@ -238,7 +238,7 @@ local function PostUpdateHealth(bar, unit, min, max)
 			end
 		end
 	end
-    
+    ]]--
 	if((UnitIsTapped(unit) and not(UnitIsTappedByPlayer(unit))) or not(UnitIsConnected(unit))) then 
 		bar:SetStatusBarColor(0.6, 0.6, 0.6)
 	else
@@ -302,6 +302,7 @@ local function DruidManaOnUpdate(self, event, unit)
 end
 
 local function PostUpdatePower(bar, unit, min, max)
+    --[[
     local slf = bar:GetParent()
     
 	if (not bar.value) then return end
@@ -317,6 +318,7 @@ local function PostUpdatePower(bar, unit, min, max)
 		end
 	end
 	slf.UNIT_NAME_UPDATE(slf, event, unit)
+    ]]--
 end
 
 local function PostCreateAuraIcon(self, button)
@@ -458,7 +460,19 @@ local function styleFunc(self, unit)
 
 	self.Health.value = setFontString(self.Health, nivDB.fontStrValues, nivcfgDB.fontHeightV)
 	self.Health.value:SetPoint("RIGHT", -2, 0)
+
+    if unitInRaid or unitInParty or unitIsPartyPet then
+        self:Tag(self.Health.value, nivDB.healerMode and '[nivHP_party+raid]' or '[nivStatus_offline+dead]')
+    elseif (unit == 'player') then
+        self:Tag(self.Health.value, '[nivHP_player]')
+    elseif (unit=="pet") then
+        self:Tag(self.Health.value, '[nivHP_pet]')
+    else
+        self:Tag(self.Health.value, '[nivHP_target+focus+tot]')
+    end
+
 	self.Power.value = setFontString(self.Power, nivDB.fontStrValues, nivcfgDB.fontHeightV)
+    self:Tag(self.Power.value, '[nivPP]')
 	self.Power.value:Hide()
 
 	self.Name = setFontString(self.Health, nivDB.fontStrNames, nivcfgDB.fontHeightN)

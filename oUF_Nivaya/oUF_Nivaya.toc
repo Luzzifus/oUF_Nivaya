@@ -13,4 +13,5 @@ libs\LibSharedMedia-3.0.lua
 libs\LibBanzai-2.0.lua
 
 init_and_config.lua
+tags.lua
 oUF_Nivaya.lua
