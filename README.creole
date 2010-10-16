@@ -7,10 +7,17 @@ For a detailed description and a feature overview visit [[http://www.wowinterfac
 
 == Version History ==
 
+
+=== r56 ===
+
+ * Fixed a bug causing an error message when changing textures.
+ 
+
 === r55 ===
 
  * Fixed clicks going into void on party/raidframes.
  * First go on tags (HP/power/status of all units).
+ * Blizzards Raidframes will be completely hidden now (including the manager).
 
 
 === r53 ===

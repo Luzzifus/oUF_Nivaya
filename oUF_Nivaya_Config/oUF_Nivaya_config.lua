@@ -80,9 +80,12 @@ local RefreshTextures = function()
 			if (v.Health) then
 				v.Health:SetStatusBarTexture(nivDB.texStrHealth)
 				v.Health.bg:SetTexture(nivDB.texStrHealth)
-                v.HealCommBar:SetStatusBarTexture(nivDB.texStrHealth)
-				v.Power:SetStatusBarTexture(nivDB.texStrMana)
+                v.Power:SetStatusBarTexture(nivDB.texStrMana)
 				v.Power.bg:SetTexture(nivDB.texStrMana)
+                if v.HealPrediction then
+                    v.ohpb:SetStatusBarTexture(nivDB.texStrHealth)
+                    v.mhpb:SetStatusBarTexture(nivDB.texStrHealth)
+                end                
 			end
 		end
 	end
