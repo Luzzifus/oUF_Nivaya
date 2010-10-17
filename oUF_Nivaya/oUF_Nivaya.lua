@@ -13,22 +13,13 @@
 -- (that has nothing to do with oUF, however I didn't want to make a new addon for this single line)
 DEFAULT_CHATFRAME_ALPHA = 0
 
-local classification = {
-	["worldboss"] = "%s",
-	["rareelite"] = "%s+ Rar",
-	["elite"] = " %s+",
-	["rare"] = " %s Rar",
-	["normal"] = "%s",
-	["trivial"] = "%s",
-}
-
 -- debuff highlight definitions
 local CanDispel = {
 	PRIEST = { Magic = true, Disease = true, },
-	SHAMAN = { Poison = true, Disease = true, Curse = true, },
-	PALADIN = { Magic = true, Poison = true, Disease = true, },
+	SHAMAN = { Magic = true, Curse = true, },
+	PALADIN = { Magic = true, Disease = true, Poison = true, },
 	MAGE = { Curse = true, },
-	DRUID = { Curse = true, Poison = true, }
+	DRUID = { Magic = true, Curse = true, Poison = true, }
 }
 local playerClass = select(2, UnitClass("player"))
 local dispellist = CanDispel[playerClass] or {}
@@ -83,45 +74,7 @@ local setFontString = function(parent, fontName, fontHeight)
 end
 
 local function OverrideUpdateName(self, event, unit)
-	local unitInRaid = self:GetParent():GetName():match"oUF_Raid" 
-	local unitInParty = self:GetParent():GetName():match"oUF_Party"
-	local unitIsPartyPet = unit and unit:find('partypet%d')
-	if unitInRaid or unitInParty or unitIsPartyPet then self.Name:Show() end
-	if(self.unit == unit) then
-		local name = UnitName(unit)
-		local lvl = UnitLevel(unit)
-		if lvl < 0 then lvl = "??" end
-		if UnitIsDead(unit) or UnitIsGhost(unit) or not UnitIsConnected(unit) then
-			if unitInRaid or unitInParty or (unit=="player" and not UnitIsUnit(unit, "player")) then
-				self.Name:Show()
-				if (not nivDB.healerMode) then self.Name:Hide() end
-			end	
-		end
-		if (unit=="pet") then
-			self.Name:SetText('')
-		elseif (unit=="target") or (unit=="player") then
-			name = oUF_Nivaya:ShortName(name, 25, true)
-			updateColor(self, self.Name, unit, 'SetTextColor')
-			if unitInRaid or unitInParty or unitIsPartyPet then
-				name = oUF_Nivaya:ShortName(name, nivDB.pr_namelen)
-				self.Name:SetText(name)
-			else
-				self.Name:SetText(format(classification[UnitClassification(unit)], lvl) .. ' ' .. '|cffFFFFFF' .. name .. '|r') 
-			end
-		else
-			if unitInRaid or unitInParty or unitIsPartyPet then
-				self.Name:Show()
-				updateColor(self, self.Name, unit, 'SetTextColor')
-				name = oUF_Nivaya:ShortName(name, nivDB.pr_namelen)
-				if UnitIsDead(unit) or UnitIsGhost(unit) or not UnitIsConnected(unit) then
-					self.Name:Show()
-					if (not nivDB.healerMode) then self.Name:Hide() end
-				end
-			end
-			name = oUF_Nivaya:ShortName(name, 25, true)
-			self.Name:SetText(name)
-		end
-	end
+    updateColor(self, self.Name, unit, 'SetTextColor')
 end
 
 local number = function(n)
@@ -198,12 +151,12 @@ end
 
 local LFDRoleUpdate = function(self, event)
 	local lfdrole = self.LFDRole
-	local isTank, isHealer = UnitGroupRolesAssigned(self.unit)
-
-	if(isTank) then
+    local role = UnitGroupRolesAssigned(self.unit)
+	
+	if(role == 'TANK') then
 		lfdrole:SetTexCoord(0, 19/64, 22/64, 41/64)
 		lfdrole:Show()
-	elseif(isHealer) then
+	elseif(role == 'HEALER') then
 		lfdrole:SetTexCoord(20/64, 39/64, 1/64, 20/64)
 		lfdrole:Show()
 	else
@@ -373,33 +326,45 @@ local function styleFunc(self, unit)
     if CanDispel[class] then self:RegisterEvent("UNIT_AURA", UpdateDebuffHighlight) end
 
 	self.ignoreBanzai = true
+    
+    self.Name = setFontString(self.Health, nivDB.fontStrNames, nivcfgDB.fontHeightN)
+    self.Range = nil
 
 	self.Health.value = setFontString(self.Health, nivDB.fontStrValues, nivcfgDB.fontHeightV)
+    self.Health.value.frequentUpdates = true
 	self.Health.value:SetPoint("RIGHT", -2, 0)
 
     if unitInRaid or unitInParty or unitIsPartyPet then
         self:Tag(self.Health.value, nivDB.healerMode and '[nivHP_party+raid]' or '[nivStatus_offline+dead]')
+        self:Tag(self.Name, nivDB.healerMode and '[nivName_prAlways]' or '[nivName_prMinimal]')
     elseif (unit == 'player') then
         self:Tag(self.Health.value, '[nivHP_player]')
+        self:Tag(self.Name, '[nivName_player+target]')
+    elseif (unit == 'target') then
+        self:Tag(self.Health.value, '[nivHP_target+focus+tot]')
+        self:Tag(self.Name, '[nivName_player+target]')
     elseif (unit=="pet") then
         self:Tag(self.Health.value, '[nivHP_pet]')
     else
         self:Tag(self.Health.value, '[nivHP_target+focus+tot]')
+        self:Tag(self.Name, '[nivName_std]')
     end
 
 	self.Power.value = setFontString(self.Power, nivDB.fontStrValues, nivcfgDB.fontHeightV)
+    if (unit == "player") then self.Power.value.frequentUpdates = .1 end
     self:Tag(self.Power.value, '[nivPP]')
 	self.Power.value:Hide()
-
-	self.Name = setFontString(self.Health, nivDB.fontStrNames, nivcfgDB.fontHeightN)
-    self.Range = nil
     
     if unitInParty then
         self.LFDRole = self:CreateTexture(nil, 'OVERLAY')
         self.LFDRole:SetSize(13, 13)
-        self.LFDRole:SetPoint('BOTTOMLEFT', self, 'TOPLEFT', 2, 2)
+        if nivcfgDB.verticalGroups then
+            self.LFDRole:SetPoint('TOPRIGHT', self, 'TOPLEFT', -2, -2)
+        else
+            self.LFDRole:SetPoint('BOTTOMLEFT', self, 'TOPLEFT', 2, 2)
+        end
         self.LFDRole:SetAlpha(nivcfgDB.showIcons and 1 or 0)
-        self.LFDRole.Update = LFDRoleUpdate
+        self.LFDRole.Override = LFDRoleUpdate
     end
     
 	if unitInRaid or unitInParty or unitIsPartyPet then
@@ -591,7 +556,7 @@ local function styleFunc(self, unit)
                 self.TotemBar[i] = t
 			end
 		end
-		
+
 		self.Leader = self:CreateTexture(nil, 'OVERLAY')
 		self.Leader:SetHeight(15)
 		self.Leader:SetWidth(15)
