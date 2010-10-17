@@ -34,6 +34,8 @@ banzaiIgnoredUnits = {
 
 ------------------------------------
 
+local number = oUF_Nivaya.number
+
 local function updateColor(self, element, unit, func)
 	local color, r, g, b
 	local _, class = UnitClass(unit)
@@ -75,20 +77,6 @@ end
 
 local function OverrideUpdateName(self, event, unit)
     updateColor(self, self.Name, unit, 'SetTextColor')
-end
-
-local number = function(n)
-	if n >= 1e7 then
-		return ('%.1fm'):format(n / 1e6):gsub('%.?0([km])$', '%1')
-	elseif n >= 1e6 then
-		return ('%.2fm'):format(n / 1e6):gsub('%.?0+([km])$', '%1')
-	elseif n >= 1e5 then
-		return ('%.0fk'):format(n / 1e3)
-	elseif (n >= 1e3) or (n <= -1e3) then
-		return ('%.1fk'):format(n / 1e3):gsub('%.?0([km])$', '%1')
-	else
-		return n
-	end
 end
 
 local function GetDebuffType(unit, filter)

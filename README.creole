@@ -7,12 +7,13 @@ For a detailed description and a feature overview visit [[http://www.wowinterfac
 
 == Version History ==
 
-=== r57 ===
+=== r58 ===
 
  * Added .frequentUpdates to health tags (global) and power tags (player only).
  * Updated CanDispel table to reflect changes made in WoW 4.0.
  * LFDrole icons positions now correctly complies with the vertical groups setting.
  * Fixed LFDrole icons not correctly updating.
+ * Clicking on the LDB icon will open the config again.
  * More tag conversions (names, levels, classification).
 
 

@@ -639,6 +639,20 @@ function oUF_Nivaya:UpdateClassDisplayPos()
     end
 end
 
+oUF_Nivaya.number = function(n)
+	if n >= 1e7 then
+		return ('%.1fm'):format(n / 1e6):gsub('%.?0([km])$', '%1')
+	elseif n >= 1e6 then
+		return ('%.2fm'):format(n / 1e6):gsub('%.?0+([km])$', '%1')
+	elseif n >= 1e5 then
+		return ('%.0fk'):format(n / 1e3)
+	elseif (n >= 1e3) or (n <= -1e3) then
+		return ('%.1fk'):format(n / 1e3):gsub('%.?0([km])$', '%1')
+	else
+		return n
+	end
+end
+
 function oUF_Nivaya:ShortName(tS, i, d)
 	if not tS then return end
 	local slen = tS:len()
@@ -657,7 +671,10 @@ function oUF_Nivaya:ShortName(tS, i, d)
 end
 
 function oUF_Nivaya:openConfig(args)
-
+	if(not IsAddOnLoaded('oUF_Nivaya_Config')) then
+		LoadAddOn('oUF_Nivaya_Config')
+	end
+    InterfaceOptionsFrame_OpenToCategory('oUF Nivaya')
 end
 
 oUF_Nivaya.LDB = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("oUF_Nivaya", {
