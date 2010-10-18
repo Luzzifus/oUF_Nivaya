@@ -7,6 +7,16 @@ For a detailed description and a feature overview visit [[http://www.wowinterfac
 
 == Version History ==
 
+
+=== r59 ===
+
+ * Added an option to display all debuffs, not only your own.
+ * Fixed classification tag.
+ * Removed support oUF_RuneBar and replaced it with the rune bars from oUF.
+ * New position for rune bars and totem bars, similar to HolyPower and SoulShards.
+ * Added option to change the position of rune bars and totem bars (positions tab).
+
+
 === r58 ===
 
  * Added .frequentUpdates to health tags (global) and power tags (player only).

@@ -891,11 +891,13 @@ local optPositions = function(order)
 		 						nivcfgDB.cbTextLenTF = t
 							end, },
             
-            header6 	= { type = "header", order = 25, name = "SoulShards and HolyPower", },
-            
+            header6 	= { type = "header", order = 25, name = "Class Specific", },
+
+            desc1		= { type = 'description', order = 26, name = "Here you can change the position of class specific elements. This currently includes SoulShards, HolyPower, Rune bars and Totem bars.", },
+
 			cdPos   	= {
 							type = 'select',
-							order = 26,
+							order = 27,
 							name = "Position",
 							values = { ["TopLeft"] = "Top (Left)", ["TopRight"] = "Top (Right)", ["BottomLeft"] = "Bottom (Left)", ["BottomRight"] = "Bottom (Right)", },
 							get = function(info) return nivcfgDB.cdPos end,
@@ -1389,13 +1391,26 @@ local optBuffDebuff = function(order)
 		 						local t = tonumber(value)
 		 						nivcfgDB.debuffSize = t
 		 						UpdateIconSize('debuff')
-		 					end, },		
+		 					end, },
+			
+            dbOnlyYours	= { 
+							type = 'toggle', 
+							order = 3,
+							name = "Only show your own debuffs",
+                            desc = "Disable this to see all debuffs on a target, enable to see only those debuffs cast by you. Requires /reloadui to take effect.",
+							width = "full",
+							get = function(info) 
+                                return nivcfgDB.dbOnlyYours
+							end,
+							set = function(info, value) 
+                                nivcfgDB.dbOnlyYours = value
+							end, },
 		
-			playerBD 	= optBuffDebuffUnit(3, 'player'),
-			targetBD 	= optBuffDebuffUnit(4, 'target'),
-			plpetBD		= optBuffDebuffUnit(5, 'pet'),
-			totBD		= optBuffDebuffUnit(6, 'targettarget'),
-			focusBD		= optBuffDebuffUnit(7, 'focus'),
+			playerBD 	= optBuffDebuffUnit(4, 'player'),
+			targetBD 	= optBuffDebuffUnit(5, 'target'),
+			plpetBD		= optBuffDebuffUnit(6, 'pet'),
+			totBD		= optBuffDebuffUnit(7, 'targettarget'),
+			focusBD		= optBuffDebuffUnit(8, 'focus'),
 		},
 	}
 end

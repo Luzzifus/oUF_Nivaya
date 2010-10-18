@@ -19,6 +19,7 @@ local defaults = {
     enableHealPred = true,      -- Toggle heal prediction
     hpOverflow = 1.5,           -- maximum overflow of heal prediction
     
+    dbOnlyYours = true,         -- only show your own debuffs
 	dbHighlightFilter = true,	-- Toggle filtering of debuff highlighting, 
 								-- true means you only see highlighting for debuffs you can cure
 	playerX = 380,
@@ -613,13 +614,29 @@ end
 
 function oUF_Nivaya:UpdateClassDisplayPos()
     local v
+    local min, max, inc = 1, 3, 1
+    
     if oUF_player.SoulShards then v = oUF_player.SoulShards
     elseif oUF_player.HolyPower then v = oUF_player.HolyPower 
+    elseif oUF_player.Runes then 
+        v = oUF_player.Runes
+        if (nivcfgDB.cdPos == "TopRight") or (nivcfgDB.cdPos == "BottomRight") then
+            min, max, inc = 6, 1, -1
+        else
+            min, max, inc = 1, 6, 1
+        end
+    elseif oUF_player.TotemBar then 
+        v = oUF_player.TotemBar
+        if (nivcfgDB.cdPos == "TopRight") or (nivcfgDB.cdPos == "BottomRight") then
+            min, max, inc = 4, 1, -1
+        else
+            min, max, inc = 1, 4, 1
+        end
     else return end
     
-    for i = 1, 3 do
+    for i = min, max, inc do
         v[i]:ClearAllPoints()
-        if i == 1 then
+        if i == min then
             if nivcfgDB.cdPos == "TopLeft" then
                 v[i]:SetPoint("BOTTOMLEFT", oUF_player, "TOPLEFT", 1, 3)
             elseif nivcfgDB.cdPos == "TopRight" then
@@ -631,9 +648,9 @@ function oUF_Nivaya:UpdateClassDisplayPos()
             end
         else
             if (nivcfgDB.cdPos == "TopLeft") or (nivcfgDB.cdPos == "BottomLeft") then
-                v[i]:SetPoint("TOPLEFT", v[i - 1], "TOPRIGHT", 3, 0)
+                v[i]:SetPoint("TOPLEFT", v[i - inc], "TOPRIGHT", 3, 0)
             elseif (nivcfgDB.cdPos == "TopRight") or (nivcfgDB.cdPos == "BottomRight") then
-                v[i]:SetPoint("TOPRIGHT", v[i - 1], "TOPLEFT", -3, 0)
+                v[i]:SetPoint("TOPRIGHT", v[i - inc], "TOPLEFT", -3, 0)
             end
         end
     end

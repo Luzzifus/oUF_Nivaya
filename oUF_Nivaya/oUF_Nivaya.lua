@@ -409,7 +409,7 @@ local function styleFunc(self, unit)
 		if (unit == "player") then 
 			self.Debuffs.filter = false
 		else
-			self.Debuffs.filter = "HARMFUL|PLAYER"
+			self.Debuffs.filter = nivcfgDB.dbOnlyYours and "HARMFUL|PLAYER"
 		end
 		self.Debuffs.showDebuffType = true
 		self.Debuffs.size = nivcfgDB.debuffSize
@@ -463,8 +463,8 @@ local function styleFunc(self, unit)
 			for i = 1, 3 do
 				local t = CreateFrame("StatusBar", nil, self)
 				t:SetStatusBarTexture(nivDB.texStrMana)
-				t:SetSize(15, 5)
 				t:SetStatusBarColor(.86,.44, 1)
+				t:SetSize(15, 5)
                 t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
                 t:SetBackdropColor(0, 0, 0)
                 t:SetFrameLevel(4)
@@ -478,8 +478,8 @@ local function styleFunc(self, unit)
 			for i = 1, 3 do
 				local t = CreateFrame("StatusBar", nil, self)
 				t:SetStatusBarTexture(nivDB.texStrMana)
-				t:SetSize(15, 5)
 				t:SetStatusBarColor(1,.95,.33)
+				t:SetSize(15, 5)                
                 t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
                 t:SetBackdropColor(0, 0, 0)
                 t:SetFrameLevel(4)
@@ -488,49 +488,30 @@ local function styleFunc(self, unit)
 			end
 		end
         
-        oUF_Nivaya:UpdateClassDisplayPos()
-		
-		if(class == "DEATHKNIGHT") then
-			RuneFrame:SetParent(self)
-			RuneFrame:SetScale(0.75)
-			RuneFrame:SetPoint("TOPLEFT", self, "BOTTOMRIGHT", 4 - RuneFrame:GetWidth(), 3)
-			
-			if IsAddOnLoaded('oUF_RuneBar') then
-				local rcol = { {0.77, 0.12, 0.23}, {0.77, 0.12, 0.23}, {0.4, 0.8, 0.1}, {0.4, 0.8, 0.1}, {0, 0.4, 0.7}, {0, 0.4, 0.7},}
-				self.RuneBar = {}
-				for i = 1, 6 do
-					local t = CreateFrame('StatusBar', nil, self)
-					if(i == 1) then
-						t:SetPoint("BOTTOMLEFT", self.Power, "BOTTOMLEFT", 1, 1)
-					else
-						t:SetPoint('TOPLEFT', self.RuneBar[i-1], 'TOPRIGHT', 1, 0)
-					end
-					t:SetStatusBarTexture("Interface\\AddOns\\oUF_Nivaya\\textures\\Minimalist")
-					t:SetStatusBarColor(unpack(rcol[i]))
-					t:SetHeight(2)
-					t:SetWidth(nivcfgDB.ptWidth / 6 - ((i < 6) and 1 or 2) )
-					t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
-					t:SetBackdropColor(0, 0, 0)
-					t:SetMinMaxValues(0, 1)
-                    t:SetFrameLevel(4)
-                    
-                    self.RuneBar[i] = t
-				end
-			end
+        if(class == "DEATHKNIGHT") then
+            local rcol = { {0.77, 0.12, 0.23}, {0.77, 0.12, 0.23}, {0.4, 0.8, 0.1}, {0.4, 0.8, 0.1}, {0, 0.4, 0.7}, {0, 0.4, 0.7},}
+            self.Runes = {}
+            for i = 1, 6 do
+                local t = CreateFrame('StatusBar', nil, self)
+                t:SetStatusBarTexture("Interface\\AddOns\\oUF_Nivaya\\textures\\Minimalist")
+                t:SetStatusBarColor(unpack(rcol[i]))
+                t:SetSize(10, 5)
+                t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
+                t:SetBackdropColor(0, 0, 0)
+                t:SetFrameLevel(4)
+                
+                self.Runes[i] = t
+            end
+            self.Runes.Show = function() for i = 1,6 do self.Runes[i]:SetAlpha(1) end end
+            self.Runes.Hide = function() for i = 1,6 do self.Runes[i]:SetAlpha(0) end end
 		end
 		
 		if (class == "SHAMAN") and IsAddOnLoaded("oUF_TotemBar") then
 			self.TotemBar = {}
 			for i = 1, 4 do
 				local t = CreateFrame("StatusBar", nil, self)
-				if (i == 1) then
-					t:SetPoint("BOTTOMLEFT", self.Power, "BOTTOMLEFT", 1, 1)
-				else
-					t:SetPoint("TOPLEFT", self.TotemBar[i-1], "TOPRIGHT", 1, 0)
-				end
 				t:SetStatusBarTexture("Interface\\AddOns\\oUF_Nivaya\\textures\\Minimalist")
-				t:SetHeight(2)
-				t:SetWidth(nivcfgDB.ptWidth / 4 - ((i < 4) and 1 or 2) )
+                t:SetSize(15, 5)
 				t:SetBackdrop({bgFile = [=[Interface\ChatFrame\ChatFrameBackground]=], insets = {top = -1, left = -1, bottom = -1, right = -1},})
 				t:SetBackdropColor(0, 0, 0)
 				t:SetMinMaxValues(0, 1)
@@ -544,6 +525,8 @@ local function styleFunc(self, unit)
                 self.TotemBar[i] = t
 			end
 		end
+
+        oUF_Nivaya:UpdateClassDisplayPos()        
 
 		self.Leader = self:CreateTexture(nil, 'OVERLAY')
 		self.Leader:SetHeight(15)
