@@ -848,6 +848,8 @@ local optPositions = function(order)
 		 						nivcfgDB.castbarWidth = t
 								oUF_player.Castbar:SetWidth(t)
 								oUF_target.Castbar:SetWidth(t)
+                                local sw = oUF_player.Swing
+                                if sw then sw:SetWidth(t) end
 							end, },
 			
 			cbTextLen	= {

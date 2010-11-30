@@ -346,10 +346,15 @@ local function styleFunc(self, unit)
     if unitInParty then
         self.LFDRole = self:CreateTexture(nil, 'OVERLAY')
         self.LFDRole:SetSize(13, 13)
-        if nivcfgDB.verticalGroups then
+        local vg
+        if nivDB.healerMode then vg = nivcfgDB.hmverticalGroups
+        else vg = nivcfgDB.verticalGroups end
+        if vg then
             self.LFDRole:SetPoint('TOPRIGHT', self, 'TOPLEFT', -2, -2)
+            ChatFrame1:AddMessage("vg")
         else
             self.LFDRole:SetPoint('BOTTOMLEFT', self, 'TOPLEFT', 2, 2)
+            ChatFrame1:AddMessage("not vg")
         end
         self.LFDRole:SetAlpha(nivcfgDB.showIcons and 1 or 0)
         self.LFDRole.Override = LFDRoleUpdate
