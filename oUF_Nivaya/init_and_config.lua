@@ -598,9 +598,11 @@ function oUF_Nivaya:UpdateBuffCombine()
 end
 
 function oUF_Nivaya:UpdateNamePos(self, unit)
-	local v = nivcfgDB.names[unit]
-	if not unit then return end
-	if not self.Name then return end
+	if not self then return end
+    if not unit then return end
+    if not self.Name then return end
+    
+    local v = nivcfgDB.names[unit]
 	if not v then return end
 
 	if v.enabled then self.Name:Show() else self.Name:Hide() end

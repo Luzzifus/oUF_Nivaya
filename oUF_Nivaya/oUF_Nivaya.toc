@@ -2,7 +2,7 @@
 ## Author: Nivaya
 ## Title: oUF Nivaya
 ## RequiredDeps: oUF
-## OptionalDeps: SharedMedia, SharedMediaAdditionalFonts, oUF_CombatFeedback, oUF_ReadyCheck, oUF_Voice, oUF_Experience, oUF_Reputation, oUF_Smooth, oUF_GCD, oUF_RuneBar, oUF_TotemBar
+## OptionalDeps: SharedMedia, SharedMediaAdditionalFonts, oUF_CombatFeedback, oUF_ReadyCheck, oUF_Voice, oUF_Experience, oUF_Reputation, oUF_Smooth, oUF_GCD, oUF_TotemBar, oUF_Swing
 ## X-Category: UnitFrame
 ## SavedVariables: nivcfgDB
 

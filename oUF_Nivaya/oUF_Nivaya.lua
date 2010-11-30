@@ -606,7 +606,7 @@ local function styleFunc(self, unit)
             self.Reputation:SetScript('OnLeave', function(self) self:SetAlpha(0) end)
 			self.Reputation.PostUpdate = RepOverrideText
 		end
-		
+
 	elseif(unit == 'target') then
 		self.Power.value:Show()
 		self.Power.value:SetPoint("LEFT", self.Health, "LEFT", 2, 0)
@@ -716,7 +716,17 @@ local function styleFunc(self, unit)
 		else
 			self.Castbar:SetAlpha(0)
 		end
-        self.Castbar.PostCastStart = PostCastStart        
+        self.Castbar.PostCastStart = PostCastStart
+        
+        if (unit == 'player') and IsAddOnLoaded('oUF_Swing') then
+            local sw = CreateFrame("Frame", nil, self)
+            sw:SetWidth(nivcfgDB.castbarWidth)
+            sw:SetHeight(3)
+            sw:SetPoint("TOP", self.Castbar, "BOTTOM", 0, -15)
+            sw.texture = "Interface\\AddOns\\oUF_Nivaya\\textures\\Minimalist"
+            sw.textureBG = "Interface\\AddOns\\oUF_Nivaya\\textures\\Minimalist"
+            self.Swing = sw
+        end
 	end
     
 	if (unitInRaid or unitInParty or unitIsPartyPet) then
